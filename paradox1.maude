@@ -1,0 +1,54 @@
+load featuremodel.maude
+
+mod PARADOX1 is including FEATURE-MODEL-TIME . protecting STRING + NAT .
+  subsorts String < FeatureID GroupID Name .
+  subsort Nat < TimePoint .
+  ops car auto carPlay pilot assistance infotainment bluetooth
+      noParent distance sensors brake frontSensors rearSensors : -> FeatureID [ctor] .
+  op model : -> FeatureModel .
+  op plan : -> Plans .
+  op init : -> TimeConfiguration .
+  eq model = FM(car,
+    [car -> f("Car", noParent, g("car1", AND, infotainment), mandatory)]
+  + [infotainment -> f("Infotainment System", car, g("info1", AND, bluetooth), mandatory)]
+  + [bluetooth -> f("Bluetooth", infotainment, noG, optional)]) .
+  eq init = currentTime: 0 C: model # done # empty plan: plan .
+  eq plan = at 1 do
+            addGroup(infotainment, "Group1", XOR)                           --- T1
+            addFeature(auto, "Android Auto", "Group1", optional)            --- T1
+            addFeature(carPlay, "Apple Car Play", "Group1", optional)       --- T1
+            ; ;;
+
+            at 2 do
+            addFeature(assistance, "Comfort Systems", "car1", optional)     --- T2
+            addGroup(assistance, "comfort1", AND)                           --- T2
+            addFeature(pilot, "Parking Pilot", "comfort1", optional)        --- T2
+            ; ;;
+
+            at 4 do
+            removeFeature(pilot)                                            --- T4.5 | PARADOX
+            ; ;;
+
+            at 5 do
+            changeGroupType("Group1", OR)                                   --- T5
+            addGroup(pilot, "pilot1", AND)                                  --- T5   | react to paradox
+            addFeature(distance, "Distance Sensors", "pilot1", mandatory)   --- T5
+            ; ;;
+
+            at 6 do
+            addFeature(sensors, "Sensors", "car1", optional)                --- T6
+            addGroup(sensors, "sensors1", AND)                              --- T6   (implicit)
+            moveFeature(distance, "sensors1")                               --- T6
+            addFeature(brake, "Emergency Brake", "comfort1", optional)      --- T6
+            renameFeature(assistance, "Assistance Systems")                 --- T6
+            ; ;;
+
+            at 7 do
+            removeFeature(distance)                                         --- T7   |
+            addFeature(frontSensors, "Front Sensors", "sensors1", optional) --- T7   | Split Distance Sensors feature
+            addFeature(rearSensors, "Rear Sensors", "sensors1", optional)   --- T7   |
+            ;
+            .
+endm
+
+rew init .

@@ -1,0 +1,28 @@
+load featuremodel.maude
+
+mod PARADOX2 is including FEATURE-MODEL-TIME . protecting STRING + NAT .
+  subsorts String < FeatureID GroupID Name .
+  subsort Nat < TimePoint .
+
+  ops car auto carPlay infotainment noParent : -> FeatureID [ctor] .
+  op model : -> FeatureModel .
+  op init : -> TimeConfiguration .
+  eq model = FM(car,
+    [car -> f("Car", noParent, g("car1", AND, infotainment), mandatory)]
+  + [infotainment -> f("Infotainment System", car, g("Group1", AND, auto :: carPlay), mandatory)]
+  + [auto -> f("Android Auto", infotainment, noG, optional)]
+  + [carPlay -> f("Apple Car Play", infotainment, noG, optional)]).
+  op plan : -> Plans .
+  eq init = currentTime: 0 C: model # done # empty plan: plan .
+  eq plan = at 4 do
+            changeFeatureType(carPlay, mandatory) --- T4.5 | introduce paradox
+            ; ;;
+            at 5 do
+            changeGroupType("Group1", XOR)        --- T5
+            ;
+            .
+
+endm
+
+*** evolution plan ***
+rew init .

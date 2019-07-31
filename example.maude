@@ -1,0 +1,124 @@
+load featuremodel-checker.maude
+
+mod EXAMPLE is including FEATUREMODEL-CHECKER . protecting STRING + NAT .
+  subsorts String < FeatureID GroupID Name .
+  subsort Nat < TimePoint .
+  ops car auto carPlay pilot assistance infotainment bluetooth
+      noParent distance sensors brake frontSensors rearSensors : -> FeatureID [ctor format (m o)] .
+  op model : -> FeatureModel .
+  op plan : -> Plans .
+  op init : -> TimeConfiguration .
+  eq model = FM(car,
+    [car          -> f("Car", noParent, g("car1", AND, infotainment), mandatory)]
+  + [infotainment -> f("Infotainment System", car, g("info1", AND, bluetooth), mandatory)]
+  + [bluetooth    -> f("Bluetooth", infotainment, noG, optional)]) .
+  eq init = currentTime: 0 C: model # done # empty plan: plan .
+
+  eq plan = at 1 do
+            addGroup(infotainment, "Group1", XOR)                              --- T1
+            addFeature(auto, "Android Auto", "Group1", optional)               --- T1
+            addFeature(carPlay, "Apple Car Play", "Group1", optional)     ; ;; --- T1
+
+            at 2 do
+            addFeature(assistance, "Comfort Systems", "car1", optional)        --- T2
+            addGroup(assistance, "comfort1", AND)                              --- T2
+            addFeature(pilot, "Parking Pilot", "comfort1", optional)      ; ;; --- T2
+
+            at 5 do
+            changeGroupType("Group1", OR)                                      --- T5
+            addGroup(pilot, "pilot1", AND)                                     --- T5
+            addFeature(distance, "Distance Sensors", "pilot1", mandatory) ; ;; --- T5
+
+            at 6 do
+            addFeature(sensors, "Sensors", "car1", optional)                   --- T6
+            addGroup(sensors, "sensors1", AND)                                 --- T6 (implicit)
+            moveFeature(distance, "sensors1")                                  --- T6
+            addFeature(brake, "Emergency Brake", "comfort1", optional)         --- T6
+            renameFeature(assistance, "Assistance Systems")               ; ;; --- T6
+
+            at 7 do
+            removeFeature(distance)                                            --- T7 |
+            addFeature(frontSensors, "Front Sensors", "sensors1", optional)    --- T7 | Split Sensors feature
+            addFeature(rearSensors, "Rear Sensors", "sensors1", optional)      --- T7 |
+            removeFeature(bluetooth)                                      ;    --- T7
+            .
+
+  op test : -> FeatureModel .
+  eq test = FM(car, [car -> f("Car", noParent, g("car1", AND, assistance :: infotainment :: sensors), mandatory)]
+  + [auto -> f("Android Auto", infotainment, noG, optional)]
+  + [carPlay -> f("Apple Car Play", infotainment, noG, optional)]
+  + [pilot -> f("Parking Pilot", assistance, g("pilot1", AND, noF), optional)]
+  + [assistance -> f("Assistance Systems", car, g("comfort1", AND, pilot :: brake), optional)]
+  + [infotainment -> f("Infotainment System", car, g("Group1", OR, auto :: carPlay) :: g("info1", AND, bluetooth), mandatory)]
+  + [bluetooth -> f("Bluetooth", infotainment, noG, optional)]
+  + [sensors -> f("Sensors", car, g("sensors1", AND, frontSensors :: rearSensors), optional)]
+  + [brake -> f("Emergency Brake", assistance, noG, optional)]
+  + [frontSensors -> f("Front Sensors", sensors, noG, optional)]
+  + [rearSensors -> f("Rear Sensors", sensors, noG, optional)]) .
+endm
+
+*** evolution plan ***
+red "*** at ***" .
+red modelCheck(init, feature car exists at 2) .
+red modelCheck(init, neg feature distance exists at 2) .
+red modelCheck(init, group "comfort1" exists at 4) .
+red modelCheck(init, ~ (feature distance exists at 7)) .
+red modelCheck(init, feature assistance exists starts at 2)  .
+red modelCheck(init, group "pilot1" exists starts andalso feature distance exists starts at 5) .
+red modelCheck(init, ~ (feature assistance exists starts at 4)) .
+red modelCheck(init, ~ (group "pilot1" exists starts at 4)) .
+red "*** when ***" .
+red modelCheck(init, group "comfort1" has type AND when group "Group1" has type OR starts) .
+red modelCheck(init, ~ (group "Group1" has type OR when group "comfort1" exists starts)) .
+red modelCheck(init, group "Group1" has type OR starts when group "pilot1" exists starts) .
+red modelCheck(init, feature sensors exists starts when feature distance has parent group "sensors1" starts) .
+red modelCheck(init, ~ (feature distance exists starts when feature pilot exists starts )) .
+red "*** until ***" .
+red modelCheck(init, feature bluetooth exists until 7) .
+red modelCheck(init, ~ (feature pilot exists until 100)) .
+red modelCheck(init, feature bluetooth exists until feature frontSensors exists starts) .
+red modelCheck(init, ~ (feature pilot exists until feature distance exists stops)) .
+red "*** before ***" .
+red modelCheck(init, group "comfort1" exists starts before 4) .
+red modelCheck(init, ~ (group "comfort1" exists starts before 2)) .
+red modelCheck(init, feature auto exists starts before feature brake exists starts) .
+red modelCheck(init, feature pilot exists starts before feature distance exists starts) .
+red modelCheck(init, feature assistance exists starts before group "Group1" has type OR starts) .
+red modelCheck(init, ~ (feature distance exists starts before feature pilot exists starts)) .
+red "*** after ***" .
+red modelCheck(init, feature distance exists stops after feature distance exists starts) .
+red modelCheck(init, feature distance exists starts after feature pilot exists starts) .
+red modelCheck(init, ~ (feature pilot exists starts after feature distance exists starts)) .
+red modelCheck(init, feature pilot exists after 6) .
+red modelCheck(init, feature assistance exists after 2) .
+red modelCheck(init, ~ (feature distance exists after 5)) .
+red modelCheck(init, feature pilot exists after feature assistance exists starts) .
+red modelCheck(init, ~ (feature distance exists after group "pilot1" exists starts)) .
+--- red modelCheck(init, (group "pilot1" exists andalso feature distance exists) starts at 5) . not supported!!!
+red "*** between ***" .
+red modelCheck(init, feature distance exists starts between 4 and 7) .
+red modelCheck(init, ~ (feature distance exists starts between 2 and 5)) .
+red modelCheck(init, feature distance exists starts between 4 and feature distance exists stops) .
+red modelCheck(init, ~ (feature distance exists starts between 2 and feature distance exists starts)) .
+red modelCheck(init, feature distance exists starts between feature pilot exists starts and 7) .
+red modelCheck(init, ~ (feature distance exists starts between feature pilot exists starts and 5)) .
+red modelCheck(init, feature distance exists starts between feature distance exists starts and feature distance exists stops) .
+red modelCheck(init, ~ (feature distance exists starts between feature pilot exists starts and feature distance exists starts)) .
+red "*** always ***" .
+red modelCheck(init, always feature car exists) .
+red modelCheck(init, ~ (always feature auto exists)) .
+red "*** while ***" .
+red modelCheck(init, feature auto exists while feature brake exists) .
+red modelCheck(init, ~ (feature brake exists while feature auto exists)) .
+red modelCheck(init, feature distance exists stops while group "pilot1" exists) .
+red modelCheck(init, ~ (feature distance exists stops while (neg (group "pilot1" exists)))) .
+red "*** while between ***" .
+red modelCheck(init, feature distance exists while between 5 and 7) .
+red modelCheck(init, ~ (feature distance exists while between 2 and 7)) .
+red modelCheck(init, feature distance exists while between 5 and feature frontSensors exists starts) .
+red modelCheck(init, ~ (group "Group1" has type XOR while between 2 and feature brake exists starts)) .
+red modelCheck(init, feature distance exists while between group "pilot1" exists starts and 7) .
+red modelCheck(init, ~ (feature distance exists while between group "Group1" exists starts and 7)) .
+red modelCheck(init, feature distance exists while between group "pilot1" exists starts and feature frontSensors exists starts) .
+red modelCheck(init, feature distance exists while between feature distance exists starts and feature distance exists stops) .
+red modelCheck(init, ~ (group "Group1" has type XOR while between feature pilot exists starts and feature sensors exists starts)) .
