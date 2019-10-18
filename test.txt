@@ -1,0 +1,300 @@
+		     \||||||||||||||||||/
+		   --- Welcome to Maude ---
+		     /||||||||||||||||||\
+	   Maude 2.7.1 built: Jun 27 2016 16:43:23
+	    Copyright 1997-2016 SRI International
+		   Thu Oct 17 17:47:22 2019
+==========================================
+reduce in EXAMPLE : "*** at ***" .
+rewrites: 0 in 0ms cpu (0ms real) (0 rewrites/second)
+result String: "*** at ***"
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature car exists at 2) .
+rewrites: 126 in 0ms cpu (0ms real) (246575 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, neg feature distance exists at 2) .
+rewrites: 135 in 0ms cpu (0ms real) (365853 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, group "comfort1" exists at 4) .
+rewrites: 193 in 0ms cpu (0ms real) (348375 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature distance exists at 7)) .
+rewrites: 359 in 0ms cpu (1ms real) (495172 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature assistance exists starts at 2) .
+rewrites: 116 in 0ms cpu (0ms real) (345238 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, group "pilot1" exists starts andalso
+    feature distance exists starts at 5) .
+rewrites: 181 in 0ms cpu (0ms real) (644128 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature assistance exists starts at 4))
+    .
+rewrites: 342 in 0ms cpu (0ms real) (924324 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (group "pilot1" exists starts at 4)) .
+rewrites: 342 in 0ms cpu (1ms real) (1225806 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : "*** when ***" .
+rewrites: 0 in 0ms cpu (0ms real) (0 rewrites/second)
+result String: "*** when ***"
+==========================================
+reduce in EXAMPLE : modelCheck(init, group "comfort1" has type AND when group
+    "Group1" has type OR starts) .
+rewrites: 185 in 0ms cpu (0ms real) (594855 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (group "Group1" has type OR when group
+    "comfort1" exists starts)) .
+rewrites: 344 in 0ms cpu (0ms real) (3017543 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, group "Group1" has type OR starts when
+    group "pilot1" exists starts) .
+rewrites: 185 in 0ms cpu (0ms real) (2078651 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature sensors exists starts when feature
+    distance has parent group "sensors1" starts) .
+rewrites: 271 in 0ms cpu (0ms real) (1011194 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature distance exists starts when
+    feature pilot exists starts)) .
+rewrites: 344 in 0ms cpu (1ms real) (558441 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : "*** until ***" .
+rewrites: 0 in 0ms cpu (0ms real) (~ rewrites/second)
+result String: "*** until ***"
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature bluetooth exists until 7) .
+rewrites: 343 in 0ms cpu (0ms real) (436942 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature pilot exists until 100)) .
+rewrites: 13 in 0ms cpu (0ms real) (126213 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature bluetooth exists until feature
+    frontSensors exists starts) .
+rewrites: 343 in 0ms cpu (0ms real) (1212014 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature pilot exists until feature
+    distance exists stops)) .
+rewrites: 13 in 0ms cpu (0ms real) (113043 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : "*** before ***" .
+rewrites: 0 in 0ms cpu (0ms real) (0 rewrites/second)
+result String: "*** before ***"
+==========================================
+reduce in EXAMPLE : modelCheck(init, group "comfort1" exists starts before 4) .
+rewrites: 117 in 0ms cpu (0ms real) (921259 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (group "comfort1" exists starts before
+    2)) .
+rewrites: 344 in 0ms cpu (0ms real) (633517 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature auto exists starts before feature
+    brake exists starts) .
+rewrites: 273 in 0ms cpu (1ms real) (837423 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature pilot exists starts before feature
+    distance exists starts) .
+rewrites: 187 in 0ms cpu (0ms real) (1191082 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature assistance exists starts before
+    group "Group1" has type OR starts) .
+rewrites: 187 in 0ms cpu (0ms real) (1272108 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature distance exists starts before
+    feature pilot exists starts)) .
+rewrites: 355 in 0ms cpu (1ms real) (445420 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : "*** after ***" .
+rewrites: 0 in 0ms cpu (0ms real) (~ rewrites/second)
+result String: "*** after ***"
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature distance exists stops after
+    feature distance exists starts) .
+rewrites: 339 in 0ms cpu (1ms real) (355718 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature distance exists starts after
+    feature pilot exists starts) .
+rewrites: 188 in 0ms cpu (0ms real) (350093 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature pilot exists starts after
+    feature distance exists starts)) .
+rewrites: 356 in 0ms cpu (0ms real) (658040 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature pilot exists after 6) .
+rewrites: 343 in 0ms cpu (1ms real) (2170886 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature assistance exists after 2) .
+rewrites: 343 in 0ms cpu (0ms real) (2503649 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature distance exists after 5)) .
+rewrites: 344 in 0ms cpu (0ms real) (433249 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature pilot exists after feature
+    assistance exists starts) .
+rewrites: 349 in 0ms cpu (1ms real) (367755 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature distance exists after group
+    "pilot1" exists starts)) .
+rewrites: 353 in 0ms cpu (0ms real) (2941666 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : "*** between ***" .
+rewrites: 0 in 0ms cpu (0ms real) (0 rewrites/second)
+result String: "*** between ***"
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature distance exists starts between 4
+    and 7) .
+rewrites: 188 in 0ms cpu (0ms real) (1649122 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature distance exists starts between
+    2 and 5)) .
+rewrites: 356 in 0ms cpu (0ms real) (964769 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature distance exists starts between 4
+    and feature distance exists stops) .
+rewrites: 341 in 0ms cpu (0ms real) (1550000 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature distance exists starts between
+    2 and feature distance exists starts)) .
+rewrites: 361 in 0ms cpu (0ms real) (3504854 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature distance exists starts between
+    feature pilot exists starts and 7) .
+rewrites: 191 in 0ms cpu (0ms real) (1785046 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature distance exists starts between
+    feature pilot exists starts and 5)) .
+rewrites: 362 in 0ms cpu (0ms real) (994505 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature distance exists starts between
+    feature distance exists starts and feature distance exists stops) .
+rewrites: 342 in 0ms cpu (0ms real) (3026548 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature distance exists starts between
+    feature pilot exists starts and feature distance exists starts)) .
+rewrites: 367 in 0ms cpu (0ms real) (3084033 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : "*** always ***" .
+rewrites: 0 in 0ms cpu (0ms real) (0 rewrites/second)
+result String: "*** always ***"
+==========================================
+reduce in EXAMPLE : modelCheck(init, always feature car exists) .
+rewrites: 336 in 0ms cpu (0ms real) (4048192 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (always feature auto exists)) .
+rewrites: 13 in 0ms cpu (0ms real) (178082 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : "*** while ***" .
+rewrites: 0 in 0ms cpu (0ms real) (0 rewrites/second)
+result String: "*** while ***"
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature auto exists while feature brake
+    exists) .
+rewrites: 386 in 0ms cpu (0ms real) (4825000 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature brake exists while feature auto
+    exists)) .
+rewrites: 80 in 0ms cpu (0ms real) (1095890 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature distance exists stops while group
+    "pilot1" exists) .
+rewrites: 340 in 0ms cpu (0ms real) (845771 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature distance exists stops while neg
+    group "pilot1" exists)) .
+rewrites: 347 in 0ms cpu (2ms real) (532208 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : "*** while between ***" .
+rewrites: 0 in 0ms cpu (0ms real) (0 rewrites/second)
+result String: "*** while between ***"
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature distance exists while between 5
+    and 7) .
+rewrites: 358 in 0ms cpu (1ms real) (1826530 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature distance exists while between 2
+    and 7)) .
+rewrites: 363 in 0ms cpu (1ms real) (1620535 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature distance exists while between 5
+    and feature frontSensors exists starts) .
+rewrites: 358 in 0ms cpu (1ms real) (465539 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (group "Group1" has type XOR while
+    between 2 and feature brake exists starts)) .
+rewrites: 369 in 0ms cpu (1ms real) (471867 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature distance exists while between
+    group "pilot1" exists starts and 7) .
+rewrites: 343 in 0ms cpu (1ms real) (469220 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (feature distance exists while between
+    group "Group1" exists starts and 7)) .
+rewrites: 349 in 0ms cpu (1ms real) (1216027 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature distance exists while between
+    group "pilot1" exists starts and feature frontSensors exists starts) .
+rewrites: 343 in 1ms cpu (2ms real) (217501 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, feature distance exists while between
+    feature distance exists starts and feature distance exists stops) .
+rewrites: 343 in 0ms cpu (1ms real) (1319230 rewrites/second)
+result Bool: true
+==========================================
+reduce in EXAMPLE : modelCheck(init, ~ (group "Group1" has type XOR while
+    between feature pilot exists starts and feature sensors exists starts)) .
+rewrites: 353 in 0ms cpu (0ms real) (1234265 rewrites/second)
+result Bool: true
+
+Bye.

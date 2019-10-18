@@ -386,3 +386,5 @@ mod FEATURE-MODEL-TIME is protecting FEATURE-MODEL .
 endm
 
 set print attribute on .
+set show stats off .
+set show breakdown on .
