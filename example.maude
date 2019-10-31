@@ -12,7 +12,7 @@ mod EXAMPLE is including FEATUREMODEL-CHECKER . protecting STRING + NAT .
     [car          -> f("Car", noParent, g("car1", AND, infotainment), mandatory)]
   + [infotainment -> f("Infotainment System", car, g("info1", AND, bluetooth), mandatory)]
   + [bluetooth    -> f("Bluetooth", infotainment, noG, optional)]) .
-  eq init = currentTime: 0 C: model # done # empty plan: plan .
+  eq init = currentTime: 0 C: model # done plan: plan .
 
   eq plan = at 1 do
             addGroup(infotainment, "Group1", XOR)                              --- T1
@@ -63,62 +63,23 @@ red modelCheck(init, feature car exists at 2) .
 red modelCheck(init, neg feature distance exists at 2) .
 red modelCheck(init, group "comfort1" exists at 4) .
 red modelCheck(init, ~ (feature distance exists at 7)) .
-red modelCheck(init, feature assistance exists starts at 2)  .
-red modelCheck(init, group "pilot1" exists starts andalso feature distance exists starts at 5) .
-red modelCheck(init, ~ (feature assistance exists starts at 4)) .
-red modelCheck(init, ~ (group "pilot1" exists starts at 4)) .
 red "*** when ***" .
-red modelCheck(init, group "comfort1" has type AND when group "Group1" has type OR starts) .
-red modelCheck(init, ~ (group "Group1" has type OR when group "comfort1" exists starts)) .
-red modelCheck(init, group "Group1" has type OR starts when group "pilot1" exists starts) .
-red modelCheck(init, feature sensors exists starts when feature distance has parent group "sensors1" starts) .
-red modelCheck(init, ~ (feature distance exists starts when feature pilot exists starts )) .
 red "*** until ***" .
 red modelCheck(init, feature bluetooth exists until 7) .
 red modelCheck(init, ~ (feature pilot exists until 100)) .
-red modelCheck(init, feature bluetooth exists until feature frontSensors exists starts) .
-red modelCheck(init, ~ (feature pilot exists until feature distance exists stops)) .
 red "*** before ***" .
-red modelCheck(init, group "comfort1" exists starts before 4) .
-red modelCheck(init, ~ (group "comfort1" exists starts before 2)) .
-red modelCheck(init, feature auto exists starts before feature brake exists starts) .
-red modelCheck(init, feature pilot exists starts before feature distance exists starts) .
-red modelCheck(init, feature assistance exists starts before group "Group1" has type OR starts) .
-red modelCheck(init, ~ (feature distance exists starts before feature pilot exists starts)) .
 red "*** after ***" .
-red modelCheck(init, feature distance exists stops after feature distance exists starts) .
-red modelCheck(init, feature distance exists starts after feature pilot exists starts) .
-red modelCheck(init, ~ (feature pilot exists starts after feature distance exists starts)) .
 red modelCheck(init, feature pilot exists after 6) .
 red modelCheck(init, feature assistance exists after 2) .
 red modelCheck(init, ~ (feature distance exists after 5)) .
-red modelCheck(init, feature pilot exists after feature assistance exists starts) .
-red modelCheck(init, ~ (feature distance exists after group "pilot1" exists starts)) .
 --- red modelCheck(init, (group "pilot1" exists andalso feature distance exists) starts at 5) . not supported!!!
 red "*** between ***" .
-red modelCheck(init, feature distance exists starts between 4 and 7) .
-red modelCheck(init, ~ (feature distance exists starts between 2 and 5)) .
-red modelCheck(init, feature distance exists starts between 4 and feature distance exists stops) .
-red modelCheck(init, ~ (feature distance exists starts between 2 and feature distance exists starts)) .
-red modelCheck(init, feature distance exists starts between feature pilot exists starts and 7) .
-red modelCheck(init, ~ (feature distance exists starts between feature pilot exists starts and 5)) .
-red modelCheck(init, feature distance exists starts between feature distance exists starts and feature distance exists stops) .
-red modelCheck(init, ~ (feature distance exists starts between feature pilot exists starts and feature distance exists starts)) .
 red "*** always ***" .
 red modelCheck(init, always feature car exists) .
 red modelCheck(init, ~ (always feature auto exists)) .
 red "*** while ***" .
 red modelCheck(init, feature auto exists while feature brake exists) .
 red modelCheck(init, ~ (feature brake exists while feature auto exists)) .
-red modelCheck(init, feature distance exists stops while group "pilot1" exists) .
-red modelCheck(init, ~ (feature distance exists stops while (neg (group "pilot1" exists)))) .
 red "*** while between ***" .
 red modelCheck(init, feature distance exists while between 5 and 7) .
 red modelCheck(init, ~ (feature distance exists while between 2 and 7)) .
-red modelCheck(init, feature distance exists while between 5 and feature frontSensors exists starts) .
-red modelCheck(init, ~ (group "Group1" has type XOR while between 2 and feature brake exists starts)) .
-red modelCheck(init, feature distance exists while between group "pilot1" exists starts and 7) .
-red modelCheck(init, ~ (feature distance exists while between group "Group1" exists starts and 7)) .
-red modelCheck(init, feature distance exists while between group "pilot1" exists starts and feature frontSensors exists starts) .
-red modelCheck(init, feature distance exists while between feature distance exists starts and feature distance exists stops) .
-red modelCheck(init, ~ (group "Group1" has type XOR while between feature pilot exists starts and feature sensors exists starts)) .

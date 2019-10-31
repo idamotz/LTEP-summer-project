@@ -3,56 +3,43 @@ load featuremodel.maude
 
 mod FEATUREMODEL-CHECKER is including MODEL-CHECKER + FEATURE-MODEL-TIME . protecting NAT .
   subsort TimeConfiguration < State .
-  subsorts Entity Event < Prop .
+  subsorts Entity < Prop .
   vars    Ent Ent'     : Entity .
-  vars    Ev  Ev' Ev'' : Event  .
-  var     L            : Log    .
 
   *** Logical operators for entities ***
   op _andalso_               : Entity Entity -> Entity [ctor prec 45] .
   op _orelse_                : Entity Entity -> Entity [ctor prec 49] .
   op neg_                    : Entity        -> Entity [ctor prec 43] .
   op _imp_                   : Entity Entity -> Entity [ctor prec 50] .
-  *** Logical operators for events ***
-  op _andalso_               : Event  Event  -> Event  [ctor prec 45] .
-  op _orelse_                : Event  Event  -> Event  [ctor prec 49] .
-  op neg_                    : Event         -> Event  [ctor prec 43] .
-  op _imp_                   : Event  Event  -> Event  [ctor prec 50] .
   *** Translator functions ***
-  op _|-_                    : Configuration Event  -> Bool [prec 51] .
   op _|-_                    : Configuration Entity -> Bool [prec 51] .
 
-  eq FM(RootFid, [Fid -> F] + FT) # Ops # L
+  eq FM(RootFid, [Fid -> F] + FT) # Ops
        |- feature Fid exists = true .
 
-  eq FM(RootFid, [Fid -> f(Name, ParentFid, g(Gid, GType, Fs) :: Gs, FType)] + FT) # Ops # L
+  eq FM(RootFid, [Fid -> f(Name, ParentFid, g(Gid, GType, Fs) :: Gs, FType)] + FT) # Ops
        |- group Gid exists = true .
 
-  eq FM(RootFid, [Fid -> f(Name, ParentFid, Gs, FType)] + FT) # Ops # L
+  eq FM(RootFid, [Fid -> f(Name, ParentFid, Gs, FType)] + FT) # Ops
        |- feature Fid has type FType  = true .
 
-  eq FM(RootFid, [Fid -> f(Name, ParentFid, g(Gid, GType, Fs) :: Gs, FType)] + FT) # Ops # L
+  eq FM(RootFid, [Fid -> f(Name, ParentFid, g(Gid, GType, Fs) :: Gs, FType)] + FT) # Ops
        |- group Gid has type GType = true .
 
-  eq FM(RootFid, [Fid -> f(Name, ParentFid, g(Gid, GType, Fs) :: Gs, FType)] + FT) # Ops # L
+  eq FM(RootFid, [Fid -> f(Name, ParentFid, g(Gid, GType, Fs) :: Gs, FType)] + FT) # Ops
        |- feature Fid has parent group Gid = true .
 
-  eq FM(RootFid, [Fid -> f(Name, ParentFid, Gs, FType)] + FT) # Ops # L
+  eq FM(RootFid, [Fid -> f(Name, ParentFid, Gs, FType)] + FT) # Ops
        |- feature Fid has parent ParentFid = true .
 
-  eq FM(RootFid, [Fid -> f(Name, ParentFid, g(Gid, GType, Fs) :: Gs, FType)] + FT) # Ops # L
+  eq FM(RootFid, [Fid -> f(Name, ParentFid, g(Gid, GType, Fs) :: Gs, FType)] + FT) # Ops
        |- group Gid has parent Fid = true .
 
-  eq FM(RootFid, [Fid -> f(Name, ParentFid, Gs, FType)] + FT) # Ops # L
+  eq FM(RootFid, [Fid -> f(Name, ParentFid, Gs, FType)] + FT) # Ops
        |- feature Fid has name Name = true .
 
-  eq Model # Ops # Ev , L
-     |- Ev = true .
-
-  eq C |- Ev = false [owise] .
   eq C |- Ent = false [owise] .
 
-  eq currentTime: Time C: C plan: Ps |= Ev   = C |- Ev .
   eq currentTime: Time C: C plan: Ps |= Ent  = C |- Ent .
 
   *** Semantics for logical operators ***
@@ -60,10 +47,6 @@ mod FEATUREMODEL-CHECKER is including MODEL-CHECKER + FEATURE-MODEL-TIME . prote
   eq C |- Ent andalso Ent' =     C |- Ent and     C |- Ent' .
   eq C |- Ent orelse  Ent' =     C |- Ent or      C |- Ent' .
   eq C |- Ent imp     Ent' =     C |- Ent implies C |- Ent' .
-  eq C |- neg Ev           = not C |- Ev                    .
-  eq C |- Ev  andalso Ev'  =     C |- Ev  and     C |- Ev'  .
-  eq C |- Ev  orelse  Ev'  =     C |- Ev  or      C |- Ev'  .
-  eq C |- Ev  imp     Ev'  =     C |- Ev  implies C |- Ev'  .
 
   op isTime      : TimePoint   -> Prop [ctor] .
   op before      : TimePoint   -> Prop [ctor] . --- exclusive before
@@ -72,27 +55,13 @@ mod FEATUREMODEL-CHECKER is including MODEL-CHECKER + FEATURE-MODEL-TIME . prote
 
   sort Interval .
   op _and_               : TimePoint TimePoint -> Interval [ctor prec 59] .
-  op _and_               : TimePoint Event     -> Interval [ctor prec 59] .
-  op _and_               : Event     TimePoint -> Interval [ctor prec 59] .
-  op _and_               : Event     Event     -> Interval [ctor prec 59] .
 
   op  isTimeImplicit : TimePoint           -> Formula  [ctor]         . --- deals with time points where nothing happens, for example if nothing happens at 4, then everything that is true at 2 is also true at 4
   op _at_            : Entity    TimePoint -> Formula  [ctor prec 60] . --- True if formula is true at last timepoint with registered data
-  op _at_            : Event     TimePoint -> Formula  [ctor prec 60] .
-  op _when_          : Entity    Event     -> Formula  [ctor prec 60] . --- True if formula is true at last timepoint with registered data
-  op _when_          : Event     Event     -> Formula  [ctor prec 60] .
   op _until_         : Entity    TimePoint -> Formula  [ctor prec 60] . --- True if formula is true until first timepoint at or after given timepoint
-  op _until_         : Entity    Event     -> Formula  [ctor prec 60] . --- True if formula is true until first timepoint at or after given timepoint
-  op _before_        : Event     TimePoint -> Formula  [ctor prec 60] .
-  op _before_        : Event     Event     -> Formula  [ctor prec 60] .
-  op _after_         : Event     TimePoint -> Formula  [ctor prec 60] .
-  op _after_         : Event     Event     -> Formula  [ctor prec 60] .
   op _after_         : Entity    TimePoint -> Formula  [ctor prec 60] .
-  op _after_         : Entity    Event     -> Formula  [ctor prec 60] .
-  op _between_       : Event     Interval  -> Formula  [ctor prec 60] .
   op  always_        : Entity              -> Formula  [ctor prec 60] .
   op _while_         : Entity    Entity    -> Formula  [ctor prec 60] .
-  op _while_         : Event     Entity    -> Formula  [ctor prec 60] .
   op _while`between_ : Entity    Interval  -> Formula  [ctor prec 60] .
 
   var  C                     : Configuration     .
@@ -137,37 +106,16 @@ mod FEATUREMODEL-CHECKER is including MODEL-CHECKER + FEATURE-MODEL-TIME . prote
   eq isTimeImplicit(TP) = isTime(TP) \/ (before(TP) /\ O after(TP)) .
 
   *** User interface ***
-
-  eq Ent at TP = <> (isTimeImplicit(TP) /\ Ent) .
-  eq Ev  at TP = <> (isTime(TP)         /\ Ev)  .
-
-  eq Ent when Ev  = <> (Ev /\ Ent) .
-  eq Ev  when Ev' = <> (Ev /\ Ev') .
+  eq Ent at TP = <> (Ent /\ isTimeImplicit(TP)) .
 
   eq Ent until TP = Ent U incl after TP .
-  eq Ent until Ev = Ent U Ev .
 
-  eq Ev before TP  = <> (Ev /\ before(TP)) .
-  eq Ev before Ev' = <> (Ev /\ O <> Ev')   .
-
-  eq Ev  after TP  = <> (Ev  /\ after(TP)) .
-  eq Ev  after Ev' =     Ev' before Ev     .
   eq Ent after TP  = [] (after(TP) -> Ent) .
-  eq Ent after Ev  = <> (Ev /\ O [] Ent)   .
-
-  eq Ev between TP  and TP'  = <> (Ev  /\ before(TP') /\ incl after TP) .
-  eq Ev between TP  and Ev'  = <> (Ev  /\ O <>  Ev'   /\ incl after TP) .
-  eq Ev between Ev' and TP   = <> (Ev' /\   <> (Ev    /\ before(TP)))   . --- If Ev' happens, then eventually and before TP, Ev happens .
-  eq Ev between Ev' and Ev'' = <> (Ev' /\   <> (Ev    /\ O <> Ev''))    .
 
   eq always Ent = [] Ent .
 
   eq Ent while Ent' = always (Ent' imp Ent) .
-  eq Ev  while Ent  = <> (Ev /\ Ent)        .
 
   eq Ent while between TP and TP' = <> (isTimeImplicit(TP) /\ (Ent U incl after TP')) .
-  eq Ent while between TP and Ev  = <> (isTimeImplicit(TP) /\ (Ent U Ev))             .
-  eq Ent while between Ev and TP  = <> (Ev                 /\ (Ent U incl after TP))  .
-  eq Ent while between Ev and Ev' = <> (Ev                 /\ (Ent U Ev'))            .
 
 endm

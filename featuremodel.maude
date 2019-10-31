@@ -26,13 +26,12 @@ fmod FEATURE-MODEL is protecting STRING .
   ops AND OR XOR :                            -> GroupType [ctor] .
 
   --- Define configurations as Feature model + list of operations
-  sorts Configuration Operations Operation Event Log Entity .
+  sorts Configuration Operations Operation  Entity .
   subsort Operation < Operations .
-  subsort Event     < Log .
 
-  op _#_#_ : FeatureModel Operations Log -> Configuration [ctor format (ni ni ni ni ni d)] .
-  op done  :                             -> Operations    [ctor format (g o)] .
-  op __    : Operations   Operations     -> Operations    [ctor assoc id: done format (d ni d)] .
+  op _#_  : FeatureModel Operations -> Configuration [ctor format (ni ni ni d)] .
+  op done :                         -> Operations    [ctor format (g o)] .
+  op __   : Operations   Operations -> Operations    [ctor assoc id: done format (d ni d)] .
 
   *** Operations ***
   op addFeature        : FeatureID Name GroupID FeatureType -> Operation [ctor] . --- (NewFid, NewName, TargetGroup, FType)
@@ -55,13 +54,6 @@ fmod FEATURE-MODEL is protecting STRING .
   op feature_has`parent_       : FeatureID FeatureID   -> Entity [ctor prec 35] .
   op group_has`parent_         : GroupID   FeatureID   -> Entity [ctor prec 35] .
 
-  *** Event ***
-  ops _starts _stops : Entity -> Event [ctor prec 37] .
-
-  *** Log ***
-  op empty :         -> Log [ctor format (b o)] .
-  op _,_   : Log Log -> Log [ctor assoc comm id: empty format (d d ni d)] .
-
   var  Model                              : FeatureModel .
   vars F F'                               : Feature      .
   vars Fid Fid' ParentFid RootFid NewFid  : FeatureID    .
@@ -74,8 +66,6 @@ fmod FEATURE-MODEL is protecting STRING .
   vars GType GType'                       : GroupType    .
   vars FType FType'                       : FeatureType  .
   var  Ops                                : Operations   .
-  var  E                                  : Event        .
-  var  L                                  : Log          .
 
   *** Auxiliary functions ***
   sort Split .
@@ -184,27 +174,12 @@ fmod FEATURE-MODEL is protecting STRING .
   eq isEmptyFeatures(noF) = true .
   eq isEmptyFeatures(Fs)  = false [owise print "ERROR: Non-empty list of features! " Fs] .
 
-  op changedAllParentFeatures : Features FeatureID FeatureID -> Log .
-  eq changedAllParentFeatures(noF,       OldParent, NewParent) = empty .
-  eq changedAllParentFeatures(Fid :: Fs, OldParent, NewParent)
-   = feature Fid has parent OldParent stops ,
-     feature Fid has parent NewParent starts ,
-     changedAllParentFeatures(Fs, OldParent, NewParent) .
-
   ceq [add-feature] :
       FM(RootFid, FT)
       # addFeature(NewFid, NewName, TargetGroup, FType) Ops
-      # L
     =
       FM(RootFid, FT'')
       # Ops
-      #
-      feature NewFid exists starts ,
-      feature NewFid has name NewName starts ,
-      feature NewFid has type FType starts ,
-      feature NewFid has parent ParentFid starts ,
-      feature NewFid has parent group TargetGroup starts ,
-      L
   if notExists(NewFid, FT)
   /\ isUniqueName(NewName, FT)
   /\ FT' := addFeatureToGroup(FT, TargetGroup, NewFid) /\ FT' =/= addFeatureToGroupError
@@ -215,17 +190,9 @@ fmod FEATURE-MODEL is protecting STRING .
   ceq [remove-feature] :
       FM(RootFid, FT)
       # removeFeature(Fid) Ops
-      # L
     =
       FM(RootFid, FT'')
       # Ops
-      #
-      feature Fid exists stops ,
-      feature Fid has name Name stops ,
-      feature Fid has type FType stops ,
-      feature Fid has parent ParentFid stops ,
-      feature Fid has parent group Gid stops ,
-      L
   if notRoot(Fid, RootFid)
   /\ [Fid -> f(Name, ParentFid, Gs, FType)] ++ FT' := split: FT onFid: Fid ;
   /\ isEmptyGroup(Gs)
@@ -236,16 +203,9 @@ fmod FEATURE-MODEL is protecting STRING .
   ceq [move-feature] :
       FM(RootFid, FT)
       # moveFeature(Fid, NewGroup) Ops
-      # L
     =
       FM(RootFid, FT'''')
       # Ops
-      #
-      feature Fid has parent ParentFid stops ,
-      feature Fid has parent NewParent starts ,
-      feature Fid has parent group Gid stops ,
-      feature Fid has parent group NewGroup starts ,
-      L
   if notRoot(Fid, RootFid)
   /\ [Fid -> f(Name, ParentFid, Gs, FType)] ++ FT' := split: FT onFid: Fid ;
   /\ NewParent := parentOfGroup(FT, NewGroup) /\ NewParent =/= parentOfGroupError
@@ -259,28 +219,18 @@ fmod FEATURE-MODEL is protecting STRING .
   ceq [rename-feature] :
       FM(RootFid, FT)
       # renameFeature(Fid, NewName) Ops
-      # L
     =
       FM(RootFid, FT' + [Fid -> f(NewName, ParentFid, Gs, FType)])
       # Ops
-      #
-      feature Fid has name Name stops ,
-      feature Fid has name NewName starts ,
-      L
   if [Fid -> f(Name, ParentFid, Gs, FType)] ++ FT' := split: FT onFid: Fid ;
   /\ isUniqueName(NewName, FT) .
 
   ceq [change-feature-variation-type] :
       FM(RootFid, FT)
       # changeFeatureType(Fid, FType') Ops
-      # L
     =
       FM(RootFid, FT'')
       # Ops
-      #
-      feature Fid has type FType stops ,
-      feature Fid has type FType' starts ,
-      L
   if notRoot(Fid, RootFid)
   /\ [Fid -> f(Name, ParentFid, Gs, FType)] ++ FT' := split: FT onFid: Fid ;
   /\ FT'' := FT' + [Fid -> f(Name, ParentFid, Gs, FType')]
@@ -289,45 +239,28 @@ fmod FEATURE-MODEL is protecting STRING .
   ceq [add-group] :
       FM(RootFid, FT)
       # addGroup(Fid, Gid, GType) Ops
-      # L
     =
       FM(RootFid, FT'
         + [Fid -> f(Name, ParentFid, g(Gid, GType, noF) :: Gs, FType)])
       # Ops
-      #
-      group Gid exists starts ,
-      group Gid has type GType starts ,
-      group Gid has parent Fid starts ,
-      L
   if [Fid -> f(Name, ParentFid, Gs, FType)] ++ FT' := split: FT onFid: Fid ;
   /\ isUniqueGroupID(Gid, FT + [Fid -> f(Name, ParentFid, Gs, FType)]) .
 
   ceq [remove-group] :
       FM(RootFid, FT)
       # removeGroup(Gid) Ops
-      # L
     =
       FM(RootFid, FT' + [Fid -> f(Name, ParentFid, Gs, FType)])
       # Ops
-      #
-      group Gid exists stops ,
-      group Gid has type GType stops ,
-      group Gid has parent Fid stops ,
-      L
   if [Fid -> f(Name, ParentFid, g(Gid, GType, Fs) :: Gs, FType)] ++ FT' := split: FT onGroupID: Gid ;
   /\ isEmptyFeatures(Fs) .
 
   ceq [change-group-variation-type] :
       FM(RootFid, FT)
       # changeGroupType(Gid, GType) Ops
-      # L
     =
       FM(RootFid, FT'')
       # Ops
-      #
-      group Gid has type GType' stops ,
-      group Gid has type GType starts ,
-      L
   if [ParentFid -> f(Name, ParentOfTarget, g(Gid, GType', Fs) :: Gs, FType)] ++ FT' := split: FT onGroupID: Gid ;
   /\ FT'' := FT' + [ParentFid -> f(Name, ParentOfTarget, g(Gid, GType, Fs) :: Gs, FType)]
   /\ allWellFormed(Fs, FT'') .
@@ -335,15 +268,9 @@ fmod FEATURE-MODEL is protecting STRING .
   ceq [move-group] :
       FM(RootFid, FT)
       # moveGroup(Gid, NewParent) Ops
-      # L
     =
       FM(RootFid, FT''')
       # Ops
-      #
-      group Gid has parent OldParent stops ,
-      group Gid has parent NewParent starts ,
-      changedAllParentFeatures(Fs, OldParent, NewParent) ,
-      L
   if [NewParent -> f(Name, Fid, Gs, FType)] ++ FT' := split: FT onFid: NewParent ;
   /\ [OldParent -> f(Name', Fid', g(Gid, GType, Fs) :: Gs', FType')] ++ FT'' := split: FT' onGroupID: Gid ;
   /\ FT''' := FT''
@@ -367,21 +294,20 @@ mod FEATURE-MODEL-TIME is protecting FEATURE-MODEL .
 
   var  RootFid : FeatureID    .
   var  FT      : FeatureTable .
-  var  L       : Log          .
   var  Ops     : Operations   .
   vars CT TP   : Nat          .
   var  Ps      : Plans        .
 
   rl [advance-time] :
-      currentTime: CT C: (FM(RootFid, FT) # done # L)     plan: at TP do Ops ; ;; Ps
+      currentTime: CT C: (FM(RootFid, FT) # done) plan: at TP do Ops ; ;; Ps
     =>
-      currentTime: TP C: (FM(RootFid, FT) # Ops  # empty) plan:                   Ps .
+      currentTime: TP C: (FM(RootFid, FT) # Ops)  plan:                   Ps .
 
   --- Advance time to after last time point
   rl [finish-plan] :
-      currentTime: CT      C: FM(RootFid, FT) # done # L     plan: end
+      currentTime: CT      C: FM(RootFid, FT) # done  plan: end
     =>
-      currentTime: endTime C: FM(RootFid, FT) # done # empty plan: end .
+      currentTime: endTime C: FM(RootFid, FT) # done  plan: end .
 
 endm
 
