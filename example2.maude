@@ -13,8 +13,8 @@ mod EXAMPLE2 is protecting FEATURE-MODEL .
                       ["IS" -> f("Infotainment System", "C", g("IS1", AND, "B"), mandatory)] +
                       ["B" -> f("Bluetooth", "IS", noG, optional)])
             # done
-            # empty
             plan: at 1 do
+                  addGroup("IS", "IS2", XOR)
                   addFeature("AA", "Android Auto", "IS2", optional)
                   addFeature("ACP", "Apple Car Play", "IS2", optional) ; ;;
                   at 2 do
