@@ -12,7 +12,7 @@ mod PARADOX1 is including FEATURE-MODEL-TIME . protecting STRING + NAT .
     [car -> f("Car", noParent, g("car1", AND, infotainment), mandatory)]
   + [infotainment -> f("Infotainment System", car, g("info1", AND, bluetooth), mandatory)]
   + [bluetooth -> f("Bluetooth", infotainment, noG, optional)]) .
-  eq init = currentTime: 0 C: model # done # empty plan: plan .
+  eq init = currentTime: 0 C: model # done plan: plan .
   eq plan = at 1 do
             addGroup(infotainment, "Group1", XOR)                           --- T1
             addFeature(auto, "Android Auto", "Group1", optional)            --- T1
