@@ -18,12 +18,12 @@ fmod FEATURE-MODEL is protecting STRING .
   op  f                  : Name     FeatureID Groups FeatureType -> Feature     [ctor format (b o)] .
   op  noF                :                                       -> Features    [ctor] .
   op  _::_               : Features Features                     -> Features    [ctor assoc comm id: noF] .
-  ops optional mandatory :                                       -> FeatureType [ctor] .
+  ops OPTIONAL MANDATORY :                                       -> FeatureType [ctor] .
 
   op  g          : GroupID GroupType Features -> Group     [ctor format (r o)] .
   op  noG        :                            -> Groups    [ctor format (r o)] .
   op  _::_       : Groups  Groups             -> Groups    [ctor assoc comm id: noG] .
-  ops AND OR XOR :                            -> GroupType [ctor] .
+  ops AND OR ALTERNATIVE :                            -> GroupType [ctor] .
 
   --- Define configurations as Feature model + list of operations
   sorts Configuration Operations Operation Event Log Entity .
@@ -95,8 +95,8 @@ fmod FEATURE-MODEL is protecting STRING .
   ceq isWellFormed(FT + [Fid -> f(Name, ParentFid, Gs, FType)]
                       + [ParentFid -> f(Name', Fid', g(Gid, GType, Fid :: Fs) :: Gs', FType')], Fid)
                   = false
-                  if (FType ==  mandatory and  GType =/= AND)
-                  or (FType =/= optional  and (GType == OR or GType == XOR))
+                  if (FType ==  MANDATORY and  GType =/= AND)
+                  or (FType =/= OPTIONAL  and (GType == OR or GType == ALTERNATIVE))
                   [print "ERROR: Feature with ID " Fid " has type  " FType " but parent group (" Gid ") has type " GType ] .
   eq  isWellFormed(FT, Fid) = true [owise] .
 

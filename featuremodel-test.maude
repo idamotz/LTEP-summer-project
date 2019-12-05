@@ -7,11 +7,11 @@ mod FEATURE-MODEL-TEST is including FEATURE-MODEL . protecting NAT + STRING .
   ops g1 g2 : -> Group .
   op table : -> FeatureTable .
   op noParent : -> FeatureID .
-  eq f1 = f("f1", noParent, g(11, AND, 2 :: 4), mandatory) .
-  eq f2 = f("f2", 1, g(21, OR, 3 :: 5), optional) .
-  eq f3 = f("f3", 2, noG, mandatory) .
-  eq f4 = f("f4", 1, g(41, AND, noF), optional) .
-  eq f5 = f("f5", 2, g(51, AND, noF), optional) .
+  eq f1 = f("f1", noParent, g(11, AND, 2 :: 4), MANDATORY) .
+  eq f2 = f("f2", 1, g(21, OR, 3 :: 5), OPTIONAL) .
+  eq f3 = f("f3", 2, noG, MANDATORY) .
+  eq f4 = f("f4", 1, g(41, AND, noF), OPTIONAL) .
+  eq f5 = f("f5", 2, g(51, AND, noF), OPTIONAL) .
   eq table = [1 -> f1]
            + [2 -> f2]
            + [3 -> f3]
@@ -23,11 +23,11 @@ set print attribute on .
 *** TESTS ***
 red isWellFormed(table, 2) . --- true
 red isWellFormed(table, 3) . --- false
-rew FM(1, table) # addFeature(6, "f6", 41, mandatory) # empty .  --- should work
-rew FM(1, table) # addFeature(3, "NewName", 11, mandatory) # empty . --- should give error
-rew FM(1, table) # addFeature(6, "f1", 11, mandatory) # empty . --- should give error
-rew FM(1, table) # addFeature(6, "f6", 21, mandatory) # empty . --- should give error
-rew FM(1, table) # addFeature(6, "f6", 88, mandatory) # empty . --- should give error
+rew FM(1, table) # addFeature(6, "f6", 41, MANDATORY) # empty .  --- should work
+rew FM(1, table) # addFeature(3, "NewName", 11, MANDATORY) # empty . --- should give error
+rew FM(1, table) # addFeature(6, "f1", 11, MANDATORY) # empty . --- should give error
+rew FM(1, table) # addFeature(6, "f6", 21, MANDATORY) # empty . --- should give error
+rew FM(1, table) # addFeature(6, "f6", 88, MANDATORY) # empty . --- should give error
 rew FM(1, table) # removeFeature(3) # empty . --- should work
 rew FM(1, table) # removeFeature(1) # empty . --- should not work (root)
 rew FM(1, table) # removeFeature(2) # empty . --- should not work (non-empty)
@@ -35,15 +35,15 @@ rew FM(1, table) # moveFeature(4, 21) # empty . --- should work
 rew FM(1, table) # moveFeature(2, 51) # empty . --- should get stuck
 rew FM(1, table) # renameFeature(2, "eirik") renameFeature(4, "f2") # empty . --- should work
 rew FM(1, table) # renameFeature(2, "eirik") renameFeature(4, "f3") # empty . --- should get stuck on renameFeature(4, "f3")
-rew FM(1, table) # changeFeatureType(3, optional) # empty .  --- should work
-rew FM(1, table) # changeFeatureType(1, optional) # empty . --- should not work
-rew FM(1, table) # changeFeatureType(5, mandatory) # empty . --- should not work
-rew FM(1, table) # addGroup(3, 31, XOR) moveFeature(5, 31) # empty . --- should work
+rew FM(1, table) # changeFeatureType(3, OPTIONAL) # empty .  --- should work
+rew FM(1, table) # changeFeatureType(1, OPTIONAL) # empty . --- should not work
+rew FM(1, table) # changeFeatureType(5, MANDATORY) # empty . --- should not work
+rew FM(1, table) # addGroup(3, 31, ALTERNATIVE) moveFeature(5, 31) # empty . --- should work
 rew FM(1, table) # addGroup(3, 51, AND) # empty . --- should not work
-rew FM(1, table) # addGroup(5, 52, OR) addGroup(5, 53, AND) addGroup(5, 54, XOR) addGroup(3, 51, AND) # empty . --- should get stuck on addGroup(3, 51, AND)
+rew FM(1, table) # addGroup(5, 52, OR) addGroup(5, 53, AND) addGroup(5, 54, ALTERNATIVE) addGroup(3, 51, AND) # empty . --- should get stuck on addGroup(3, 51, AND)
 rew FM(1, table) # removeGroup(51) # empty . --- should work
 rew FM(1, table) # removeGroup(21) # empty . --- should not work
-rew FM(1, table) # changeGroupType(21, XOR) # empty . --- should not work
+rew FM(1, table) # changeGroupType(21, ALTERNATIVE) # empty . --- should not work
 rew FM(1, table) # changeGroupType(21, AND) # empty . --- should work
 rew FM(1, table) # moveGroup(21, 4) # empty . --- should work
 rew FM(1, table) # moveGroup(21, 3) # empty . --- should get stuck

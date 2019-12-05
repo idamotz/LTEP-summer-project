@@ -267,7 +267,7 @@ reduce in EXAMPLE : modelCheck(init, feature distance exists while between 5
 rewrites: 358 in 0ms cpu (1ms real) (465539 rewrites/second)
 result Bool: true
 ==========================================
-reduce in EXAMPLE : modelCheck(init, ~ (group "Group1" has type XOR while
+reduce in EXAMPLE : modelCheck(init, ~ (group "Group1" has type ALTERNATIVE while
     between 2 and feature brake exists starts)) .
 rewrites: 369 in 0ms cpu (1ms real) (471867 rewrites/second)
 result Bool: true
@@ -292,7 +292,7 @@ reduce in EXAMPLE : modelCheck(init, feature distance exists while between
 rewrites: 343 in 0ms cpu (1ms real) (1319230 rewrites/second)
 result Bool: true
 ==========================================
-reduce in EXAMPLE : modelCheck(init, ~ (group "Group1" has type XOR while
+reduce in EXAMPLE : modelCheck(init, ~ (group "Group1" has type ALTERNATIVE while
     between feature pilot exists starts and feature sensors exists starts)) .
 rewrites: 353 in 0ms cpu (0ms real) (1234265 rewrites/second)
 result Bool: true

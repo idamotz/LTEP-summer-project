@@ -38,7 +38,7 @@ mod MY-PLAN is including FEATUREMODEL-CHECKER . protecting STRING + NAT .
     --- Create initial configuration (what your feature model looks like now)
     op configuration : -> Configuration .
     eq configuration = FM("RootID", 
-                        ["RootID" -> f("RootName", noParent, noG, mandatory)])
+                        ["RootID" -> f("RootName", noParent, noG, MANDATORY)])
                         # done 
                         # empty . --- Example configuration.  
     --- Model plan (which changes you plan on making, and when)
@@ -47,7 +47,7 @@ mod MY-PLAN is including FEATUREMODEL-CHECKER . protecting STRING + NAT .
               --- add a group to the root feature
               addGroup("RootID", "Group1", AND) 
               --- add a feature to the newly created group
-              addFeature("ChildID", "ChildName", "Group1", optional) ; ;; 
+              addFeature("ChildID", "ChildName", "Group1", OPTIONAL) ; ;; 
               at 5 do
               --- Give the new feature a better name
               renameFeature("ChildID", "BetterName") ; .
@@ -70,9 +70,9 @@ rewrite in MY-PLAN : init .
 result TimeConfiguration: 
 currentTime: endTime
 C: 
-FM("RootID", ["ChildID" -> f("BetterName", "RootID", noG, optional)]
+FM("RootID", ["ChildID" -> f("BetterName", "RootID", noG, OPTIONAL)]
   + ["RootID" -> f("RootName", noParent, g("Group1", AND, "ChildID"),
-    mandatory)])
+    MANDATORY)])
 #
 done
 #
