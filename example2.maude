@@ -5,7 +5,6 @@ mod EXAMPLE2 is protecting FEATURE-MODEL .
                  protecting STRING .
   subsorts String < FeatureID GroupID Name .
   op init : -> TimeConfiguration .
-  op noParent : -> FeatureID [ctor] .
 
   eq init = currentTime: 0
             C: FM("C",

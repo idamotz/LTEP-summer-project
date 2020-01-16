@@ -6,7 +6,6 @@ mod FEATURE-MODEL-TEST is including FEATURE-MODEL . protecting NAT + STRING .
   ops f1 f2 f3 f4 f5 : -> Feature .
   ops g1 g2 : -> Group .
   op table : -> FeatureTable .
-  op noParent : -> FeatureID .
   eq f1 = f("f1", noParent, g(11, AND, 2 :: 4), MANDATORY) .
   eq f2 = f("f2", 1, g(21, OR, 3 :: 5), OPTIONAL) .
   eq f3 = f("f3", 2, noG, MANDATORY) .

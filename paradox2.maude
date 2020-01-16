@@ -4,7 +4,7 @@ mod PARADOX2 is including FEATURE-MODEL-TIME . protecting STRING + NAT .
   subsorts String < FeatureID GroupID Name .
   subsort Nat < TimePoint .
 
-  ops car auto carPlay infotainment noParent : -> FeatureID [ctor] .
+  ops car auto carPlay infotainment : -> FeatureID [ctor] .
   op model : -> FeatureModel .
   op init : -> TimeConfiguration .
   eq model = FM(car,

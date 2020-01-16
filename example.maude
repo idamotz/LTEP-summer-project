@@ -4,7 +4,7 @@ mod EXAMPLE is including FEATUREMODEL-CHECKER . protecting STRING + NAT .
   subsorts String < FeatureID GroupID Name .
   subsort Nat < TimePoint .
   ops car auto carPlay pilot assistance infotainment bluetooth
-      noParent distance sensors brake frontSensors rearSensors : -> FeatureID [ctor format (m o)] .
+    distance sensors brake frontSensors rearSensors : -> FeatureID [ctor format (m o)] .
   op model : -> FeatureModel .
   op plan : -> Plans .
   op init : -> TimeConfiguration .

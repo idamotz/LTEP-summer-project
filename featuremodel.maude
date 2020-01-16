@@ -19,6 +19,7 @@ fmod FEATURE-MODEL is protecting STRING .
   op  noF                :                                       -> Features    [ctor] .
   op  _::_               : Features Features                     -> Features    [ctor assoc comm id: noF] .
   ops OPTIONAL MANDATORY :                                       -> FeatureType [ctor] .
+  op  noParent           :                                       -> FeatureID   [ctor] .
 
   op  g          : GroupID GroupType Features -> Group     [ctor format (r o)] .
   op  noG        :                            -> Groups    [ctor format (r o)] .
