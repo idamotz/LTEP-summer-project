@@ -419,7 +419,7 @@ mod FEATURE-MODEL-TIME is protecting FEATURE-MODEL .
 
   op endTime                :                               -> TimePoint         [ctor] .
   op currentTime:_C:_plan:_ : TimePoint Configuration Plans -> TimeConfiguration [ctor format(bn o bn o bn o d)] .
-  op planError : TimePoint Operation           -> TimeConfiguration [ctor]
+  op planError              : TimePoint Operation           -> TimeConfiguration [ctor] .
   op at_do_;                : TimePoint Operations          -> Plan              [ctor format (mn o m on d d)] .
   op end                    :                               -> Plans             [ctor] .
   op _;;_                   : Plans Plans                   -> Plans             [ctor assoc id: end] .
