@@ -214,6 +214,14 @@ fmod FEATURE-MODEL is protecting STRING .
   /\ FT'' := FT' + [NewFid -> f(NewName, ParentFid, noG, FType)]
   /\ isWellFormed(FT'', NewFid) .
 
+  eq [add-feature] :
+      FM(RootFid, FT)
+      # addFeature(NewFid, NewName, TargetGroup, FType) Ops
+      # L
+    =
+      errorConfiguration(addFeature(NewFid, NewName, TargetGroup, FType))
+    [owise] .
+
   ceq [remove-feature] :
       FM(RootFid, FT)
       # removeFeature(Fid) Ops
@@ -234,6 +242,14 @@ fmod FEATURE-MODEL is protecting STRING .
   /\ Gid := parentGroup(FT, Fid) /\ Gid =/= parentGroupError
   /\ FT'' := removeFeatureFromParent(FT', ParentFid, Fid)
   /\ FT'' =/= removeFeatureFromParentError .
+
+  eq [remove-feature] :
+      FM(RootFid, FT)
+      # removeFeature(Fid) Ops
+      # L
+    =
+      errorConfiguration(removeFeature(Fid))
+    [owise] .
 
   ceq [move-feature] :
       FM(RootFid, FT)
