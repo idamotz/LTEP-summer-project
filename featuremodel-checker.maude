@@ -173,6 +173,6 @@ mod FEATUREMODEL-CHECKER is including MODEL-CHECKER + FEATURE-MODEL-TIME . prote
   --- Sensible error messages from modelCheck
   var S : State . var Form : Formula .
   op check : State Prop -> Bool .
-  ceq check(S, Form) = true if modelCheck(S, Form) .
-  eq check(S, Form) = false [owise print "MODEL CHECK ERROR: " Form] .
+  ceq check(S, Form) = true if modelCheck(S, Form) [print "SUCCESS"] .
+  eq check(S, Form) = false [owise print "FAILURE"] .
 endm
