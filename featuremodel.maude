@@ -24,7 +24,7 @@ fmod FEATURE-MODEL is protecting STRING .
   op  g          : GroupID GroupType Features -> Group     [ctor format (r o)] .
   op  noG        :                            -> Groups    [ctor format (r o)] .
   op  _::_       : Groups  Groups             -> Groups    [ctor assoc comm id: noG] .
-  ops AND OR ALTERNATIVE :                            -> GroupType [ctor] .
+  ops AND OR ALTERNATIVE :                    -> GroupType [ctor] .
 
   --- Define configurations as Feature model + list of operations
   sorts Configuration Operations Operation Event Log Entity .
@@ -32,6 +32,7 @@ fmod FEATURE-MODEL is protecting STRING .
   subsort Event     < Log .
 
   op _#_#_ : FeatureModel Operations Log -> Configuration [ctor format (ni ni ni ni ni d)] .
+  op errorConfiguration : Operation      -> Configuration [ctor] .
   op done  :                             -> Operations    [ctor format (g o)] .
   op __    : Operations   Operations     -> Operations    [ctor assoc id: done format (d ni d)] .
 
@@ -213,6 +214,14 @@ fmod FEATURE-MODEL is protecting STRING .
   /\ FT'' := FT' + [NewFid -> f(NewName, ParentFid, noG, FType)]
   /\ isWellFormed(FT'', NewFid) .
 
+  eq [add-feature] :
+      FM(RootFid, FT)
+      # addFeature(NewFid, NewName, TargetGroup, FType) Ops
+      # L
+    =
+      errorConfiguration(addFeature(NewFid, NewName, TargetGroup, FType))
+    [owise] .
+
   ceq [remove-feature] :
       FM(RootFid, FT)
       # removeFeature(Fid) Ops
@@ -233,6 +242,14 @@ fmod FEATURE-MODEL is protecting STRING .
   /\ Gid := parentGroup(FT, Fid) /\ Gid =/= parentGroupError
   /\ FT'' := removeFeatureFromParent(FT', ParentFid, Fid)
   /\ FT'' =/= removeFeatureFromParentError .
+
+  eq [remove-feature] :
+      FM(RootFid, FT)
+      # removeFeature(Fid) Ops
+      # L
+    =
+      errorConfiguration(removeFeature(Fid))
+    [owise] .
 
   ceq [move-feature] :
       FM(RootFid, FT)
@@ -257,6 +274,14 @@ fmod FEATURE-MODEL is protecting STRING .
   /\ isWellFormed(FT'''', Fid)
   /\ Gid := parentGroup(FT, Fid) /\ Gid =/= parentGroupError .
 
+  eq [move-feature] :
+      FM(RootFid, FT)
+      # moveFeature(Fid, NewGroup) Ops
+      # L
+    =
+      errorConfiguration(moveFeature(Fid, NewGroup))
+    [owise] .
+
   ceq [rename-feature] :
       FM(RootFid, FT)
       # renameFeature(Fid, NewName) Ops
@@ -270,6 +295,14 @@ fmod FEATURE-MODEL is protecting STRING .
       L
   if [Fid -> f(Name, ParentFid, Gs, FType)] ++ FT' := split: FT onFid: Fid ;
   /\ isUniqueName(NewName, FT) .
+
+  eq [rename-feature] :
+      FM(RootFid, FT)
+      # renameFeature(Fid, NewName) Ops
+      # L
+    =
+      errorConfiguration(renameFeature(Fid, NewName))
+    [owise] .
 
   ceq [change-feature-variation-type] :
       FM(RootFid, FT)
@@ -287,6 +320,14 @@ fmod FEATURE-MODEL is protecting STRING .
   /\ FT'' := FT' + [Fid -> f(Name, ParentFid, Gs, FType')]
   /\ isWellFormed(FT'', Fid) .
 
+  eq [change-feature-variation-type] :
+      FM(RootFid, FT)
+      # changeFeatureType(Fid, FType') Ops
+      # L
+    =
+      errorConfiguration(changeFeatureType(Fid, FType'))
+    [owise] .
+
   ceq [add-group] :
       FM(RootFid, FT)
       # addGroup(Fid, Gid, GType) Ops
@@ -303,6 +344,14 @@ fmod FEATURE-MODEL is protecting STRING .
   if [Fid -> f(Name, ParentFid, Gs, FType)] ++ FT' := split: FT onFid: Fid ;
   /\ isUniqueGroupID(Gid, FT + [Fid -> f(Name, ParentFid, Gs, FType)]) .
 
+  eq [add-group] :
+      FM(RootFid, FT)
+      # addGroup(Fid, Gid, GType) Ops
+      # L
+    =
+      errorConfiguration(addGroup(Fid, Gid, GType))
+    [owise] .
+
   ceq [remove-group] :
       FM(RootFid, FT)
       # removeGroup(Gid) Ops
@@ -318,6 +367,14 @@ fmod FEATURE-MODEL is protecting STRING .
   if [Fid -> f(Name, ParentFid, g(Gid, GType, Fs) :: Gs, FType)] ++ FT' := split: FT onGroupID: Gid ;
   /\ isEmptyFeatures(Fs) .
 
+  eq [remove-group] :
+      FM(RootFid, FT)
+      # removeGroup(Gid) Ops
+      # L
+    =
+      errorConfiguration(removeGroup(Gid))
+    [owise] .
+
   ceq [change-group-variation-type] :
       FM(RootFid, FT)
       # changeGroupType(Gid, GType) Ops
@@ -332,6 +389,14 @@ fmod FEATURE-MODEL is protecting STRING .
   if [ParentFid -> f(Name, ParentOfTarget, g(Gid, GType', Fs) :: Gs, FType)] ++ FT' := split: FT onGroupID: Gid ;
   /\ FT'' := FT' + [ParentFid -> f(Name, ParentOfTarget, g(Gid, GType, Fs) :: Gs, FType)]
   /\ allWellFormed(Fs, FT'') .
+
+  eq [change-group-variation-type] :
+      FM(RootFid, FT)
+      # changeGroupType(Gid, GType) Ops
+      # L
+    =
+      errorConfiguration(changeGroupType(Gid, GType))
+    [owise] .
 
   ceq [move-group] :
       FM(RootFid, FT)
@@ -353,6 +418,14 @@ fmod FEATURE-MODEL is protecting STRING .
   /\ FT'''' := updateParents(FT''', Fs, NewParent) /\ FT'''' =/= updateParentsError
   /\ allNotSubFeature(Fs, NewParent, RootFid, FT) .
 
+  eq [move-group] :
+      FM(RootFid, FT)
+      # moveGroup(Gid, NewParent) Ops
+      # L
+    =
+      errorConfiguration(moveGroup(Gid, NewParent))
+    [owise] .
+
 endfm
 
 mod FEATURE-MODEL-TIME is protecting FEATURE-MODEL .
@@ -362,6 +435,7 @@ mod FEATURE-MODEL-TIME is protecting FEATURE-MODEL .
 
   op endTime                :                               -> TimePoint         [ctor] .
   op currentTime:_C:_plan:_ : TimePoint Configuration Plans -> TimeConfiguration [ctor format(bn o bn o bn o d)] .
+  op planError              : TimePoint Operation           -> TimeConfiguration [ctor] .
   op at_do_;                : TimePoint Operations          -> Plan              [ctor format (mn o m on d d)] .
   op end                    :                               -> Plans             [ctor] .
   op _;;_                   : Plans Plans                   -> Plans             [ctor assoc id: end] .
@@ -369,6 +443,7 @@ mod FEATURE-MODEL-TIME is protecting FEATURE-MODEL .
   var  RootFid : FeatureID    .
   var  FT      : FeatureTable .
   var  L       : Log          .
+  var  Op      : Operation    .
   var  Ops     : Operations   .
   vars CT TP   : Nat          .
   var  Ps      : Plans        .
@@ -383,6 +458,13 @@ mod FEATURE-MODEL-TIME is protecting FEATURE-MODEL .
       currentTime: CT      C: FM(RootFid, FT) # done # L     plan: end
     =>
       currentTime: endTime C: FM(RootFid, FT) # done # empty plan: end .
+
+  --- Stop if error has occured. Print error message
+  eq [paradox] :
+      currentTime: CT C: errorConfiguration(Op) plan: Ps
+    =
+      planError(CT, Op)
+    [print "PLAN ERROR: " CT " - " Op] .
 
 endm
 

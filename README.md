@@ -57,6 +57,7 @@ endm
 ```
 
 Next, run Maude and input `in <filename.maude>`. Next, check that your plan runs without errors:
+
 ```
 Maude> rew init .
 ```
@@ -81,9 +82,49 @@ plan: end
 Here, we can see the final state of the feature model, with all the plans implemented. If it gets stuck, it will give an error message showing why, which can be used to correct the plan. If the plan is correct, like it is here, you can test temporal constraints:
 
 ```
-Maude> red modelCheck(init, feature "ChildID" exists after 1) .
-reduce in MY-PLAN : modelCheck(init, feature "ChildID" exists after 1) .
+Maude> red check(init, feature "ChildID" exists after 1) .
+reduce in MY-PLAN : check(init, feature "ChildID" exists
+    after 1) .
+SUCCESS
 result Bool: true
 ```
 
-If the constraint fails, it will give a counterexample, showing the path where the formula failed.
+### Output of program
+
+#### Soundness checker
+
+Since maude produces a lot of information that are hard to parse and make sense of, we have included print statements across the code that will give you all the necessary information. Running the maude modules should be run with the following command:
+
+```
+maude -print-to-stderr 1> /dev/null <filename.maude>
+```
+
+The `-print-to-stderr` flag will send all the print statements to the stderr channel, which allows us to disregard the standard output (stdout). If the program ran without errors, no output will be produced. However, if the plan contains errors, the output will report what went wrong, at what timepoint, and what operation. The output can look something like this:
+
+```
+ERROR: Feature with ID pilot does not exist.
+PLAN ERROR: 5 - addGroup(pilot, "pilot1", AND)
+```
+
+#### Model checker
+
+Assuming a sound plan, you construct and check temporal statements using the model checker. See `example.maude` for a full example. Given an initial model `init`, we can check the temporal properties like this:
+
+```
+red check(init, feature car exists at 2) .
+red check(init, neg feature distance exists at 2) .
+red check(init, group "comfort1" exists at 4) .
+red check(init, feature distance exists at 7) .
+```
+
+Each `check` statement will produce either `SUCCESS` or `FAILURE` print statements.
+
+Running such a module with `maude -print-to-stderr 1> /dev/null example.maude` will produce the following output:
+
+```
+SUCCESS
+SUCCESS
+SUCCESS
+FAILURE 
+```
+

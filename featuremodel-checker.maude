@@ -170,4 +170,9 @@ mod FEATUREMODEL-CHECKER is including MODEL-CHECKER + FEATURE-MODEL-TIME . prote
   eq Ent while between Ev and TP  = <> (Ev                 /\ (Ent U incl after TP))  .
   eq Ent while between Ev and Ev' = <> (Ev                 /\ (Ent U Ev'))            .
 
+  --- Sensible error messages from modelCheck
+  var S : State . var Form : Formula .
+  op check : State Prop -> Bool .
+  ceq check(S, Form) = true if modelCheck(S, Form) [print "SUCCESS"] .
+  eq check(S, Form) = false [owise print "FAILURE"] .
 endm
