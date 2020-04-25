@@ -403,7 +403,7 @@ fmod FEATURE-MODEL is protecting STRING .
       # moveGroup(Gid, NewParent) Ops
       # L
     =
-      FM(RootFid, FT''')
+      FM(RootFid, FT'''')
       # Ops
       #
       group Gid has parent OldParent stops ,
