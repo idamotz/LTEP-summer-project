@@ -34,7 +34,7 @@ mod FEATUREMODEL-CHECKER is including MODEL-CHECKER + FEATURE-MODEL-TIME . prote
   eq FM(RootFid, [Fid -> f(Name, ParentFid, g(Gid, GType, Fs) :: Gs, FType)] + FT) # Ops # L
        |- group Gid has type GType = true .
 
-  eq FM(RootFid, [Fid -> f(Name, ParentFid, g(Gid, GType, Fs) :: Gs, FType)] + FT) # Ops # L
+  eq FM(RootFid, [ParentFid -> f(Name, Fid', g(Gid, GType, Fid :: Fs) :: Gs, FType)] + FT) # Ops # L
        |- feature Fid has parent group Gid = true .
 
   eq FM(RootFid, [Fid -> f(Name, ParentFid, Gs, FType)] + FT) # Ops # L
@@ -95,24 +95,24 @@ mod FEATUREMODEL-CHECKER is including MODEL-CHECKER + FEATURE-MODEL-TIME . prote
   op _while_         : Event     Entity    -> Formula  [ctor prec 60] .
   op _while`between_ : Entity    Interval  -> Formula  [ctor prec 60] .
 
-  var  C                     : Configuration     .
-  var  Model                 : FeatureModel      .
-  var  FT                    : FeatureTable      .
-  vars Fid ParentFid RootFid : FeatureID         .
-  var  FType                 : FeatureType       .
-  var  F                     : Feature           .
-  var  Fs                    : Features          .
-  var  Gs                    : Groups            .
-  var  GType                 : GroupType         .
-  var  Gid                   : GroupID           .
-  var  Name                  : Name              .
-  var  Op                    : Operation         .
-  var  Ops                   : Operations        .
+  var  C                          : Configuration     .
+  var  Model                      : FeatureModel      .
+  var  FT                         : FeatureTable      .
+  vars Fid ParentFid RootFid Fid' : FeatureID         .
+  var  FType                      : FeatureType       .
+  var  F                          : Feature           .
+  var  Fs                         : Features          .
+  var  Gs                         : Groups            .
+  var  GType                      : GroupType         .
+  var  Gid                        : GroupID           .
+  var  Name                       : Name              .
+  var  Op                         : Operation         .
+  var  Ops                        : Operations        .
 
-  var  TC                    : TimeConfiguration .
-  vars CT TP TP'             : Nat               .
-  var  Time                  : TimePoint         .
-  var  Ps                    : Plans             .
+  var  TC                         : TimeConfiguration .
+  vars CT TP TP'                  : Nat               .
+  var  Time                       : TimePoint         .
+  var  Ps                         : Plans             .
 
   *** State propositions concerning time ***
   eq currentTime: TP C: C plan: Ps
